@@ -11,5 +11,5 @@ steps:
   - run:
       environment:
         PARAM_VERSION: <<parameters.version>>
-      name: Install
+      name: Install Autify CLI
       command: <<include(scripts/install.bash)>>

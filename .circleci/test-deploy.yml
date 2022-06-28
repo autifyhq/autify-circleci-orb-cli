@@ -16,6 +16,10 @@ jobs:
       - checkout
       # Run your orb's commands to validate them.
       - autify-cli/install
+      - run: autify --version
+      - autify-cli/install:
+          version: 0.1.0
+      - run: autify --version
 workflows:
   test-deploy:
     jobs:
