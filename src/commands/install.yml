@@ -1,0 +1,15 @@
+description: >
+  Install Autify Command Line Interface (CLI).
+
+parameters:
+  version:
+    type: string
+    default: stable
+    description: "Install version"
+
+steps:
+  - run:
+      environment:
+        PARAM_VERSION: <<parameters.version>>
+      name: Install
+      command: <<include(scripts/install.bash)>>

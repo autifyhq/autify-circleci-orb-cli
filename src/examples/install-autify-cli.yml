@@ -1,0 +1,21 @@
+description: >
+  Install Autify Command Line Interface (CLI).
+
+usage:
+  version: 2.1
+
+  orbs:
+    autify-cli: autify/autify-cli@1
+
+  jobs:
+    autify-cli-example:
+      executor: autify-cli/default
+      steps:
+        - checkout
+        - autify-cli/install
+        - run: autify --version
+
+  workflows:
+    autify-cli:
+      jobs:
+        - autify-cli-example

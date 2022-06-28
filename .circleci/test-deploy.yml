@@ -16,7 +16,7 @@ jobs:
     steps:
       - checkout
       # Run your orb's commands to validate them.
-      - autify-cli/greet
+      - autify-cli/install
 workflows:
   test-deploy:
     jobs:
