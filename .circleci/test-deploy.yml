@@ -1,31 +1,90 @@
 version: 2.1
 orbs:
   autify-cli: autify/autify-cli@dev:<<pipeline.git.revision>>
+  node: circleci/node@5
   orb-tools: circleci/orb-tools@11.1
 
 filters: &filters
   tags:
     only: /.*/
 
+executors:
+  windows:
+    machine:
+      resource_class: 'windows.medium'
+      image: windows-server-2022-gui:current
+  macos:
+    macos:
+      xcode: 14.0.0
+
 jobs:
   # Create a job to test the commands of your orbs.
   # You may want to add additional validation steps to ensure the commands are working as expected.
-  command-tests:
-    executor: autify-cli/default
+  default-tests:
+    parameters:
+      os:
+        type: executor
+    executor: << parameters.os >>
+    shell: bash
     steps:
-      - checkout
-      # Run your orb's commands to validate them.
       - autify-cli/install
       - run: autify --version
+      - run: echo token | autify web auth login
+      - run: echo token | autify mobile auth login
+      - run: autify connect client install
+
+  specific-tests:
+    parameters:
+      os:
+        type: executor
+    executor: << parameters.os >>
+    shell: bash
+    steps:
       - autify-cli/install:
-          version: 0.1.0
-      - run: autify --version
+          shell-installer-url: "https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/beta/install-cicd.bash"
+      - run: autify --version | grep beta
+      - run: echo token | autify web auth login
+      - run: echo token | autify mobile auth login
+      - run: autify connect client install
+
+  integration-tests:
+    parameters:
+      os:
+        type: executor
+    executor: << parameters.os >>
+    shell: bash
+    environment:
+      AUTIFY_CLI_INTEGRATION_TEST_INSTALL: 1
+      AUTIFY_CONNECT_CLIENT_MODE: fake
+    steps:
+      - node/install:
+          node-version: 16.17.0
+      - run: nvm use 16.17.0
+      - autify-cli/install
+      - run: echo token | autify web auth login
+      - run: echo token | autify mobile auth login
+      - run: autify connect client install
+      - run: autify-cli-integration-test
+
 workflows:
   test-deploy:
     jobs:
       # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
-      - command-tests:
+      - default-tests:
           filters: *filters
+          matrix:
+            parameters:
+              os: [autify-cli/default, macos, windows]
+      - specific-tests:
+          filters: *filters
+          matrix:
+            parameters:
+              os: [autify-cli/default, macos, windows]
+      - integration-tests:
+          filters: *filters
+          matrix:
+            parameters:
+              os: [autify-cli/default, macos, windows]
       - orb-tools/pack:
           filters: *filters
       - orb-tools/publish:
@@ -34,7 +93,9 @@ workflows:
           pub-type: production
           requires:
             - orb-tools/pack
-            - command-tests
+            - default-tests
+            - specific-tests
+            - integration-tests
           context: orb-publishing
           filters:
             branches:

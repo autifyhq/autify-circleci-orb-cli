@@ -2,14 +2,16 @@ description: >
   Install Autify Command Line Interface (CLI).
 
 parameters:
-  version:
+  shell-installer-url:
     type: string
-    default: stable
+    # TODO: Use stable
+    default: "https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/beta/install-cicd.bash"
     description: "Install version"
 
 steps:
   - run:
       environment:
-        PARAM_VERSION: <<parameters.version>>
+        PARAM_SHELL_INSTALLER_URL: <<parameters.shell-installer-url>>
       name: Install Autify CLI
+      shell: bash -xe
       command: <<include(scripts/install.sh)>>
