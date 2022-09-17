@@ -1,6 +1,12 @@
 #!/bin/bash
-curl https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/stable/install-standalone.sh | bash
+set -xe
 
-if [ "$PARAM_VERSION" != "stable" ]; then
-  autify update -v "$PARAM_VERSION"
-fi
+: "${PARAM_SHELL_INSTALLER_URL:?"Provide the installer URL"}"
+
+cd "${CIRCLE_WORKING_DIRECTORY/#\~/$HOME}"
+export AUTIFY_CLI_INSTALL_USE_CACHE=1
+curl -L "$PARAM_SHELL_INSTALLER_URL" | bash -xe
+
+while IFS= read -r line; do
+  echo "export PATH=$line:\$PATH" >> "$BASH_ENV"
+done < "./autify/path"
