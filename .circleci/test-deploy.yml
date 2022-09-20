@@ -28,7 +28,7 @@ jobs:
     shell: bash
     steps:
       - autify-cli/install
-      - run: autify --version
+      - run: autify --version | grep -v beta
       - run: echo token | autify web auth login
       - run: echo token | autify mobile auth login
       - run: autify connect client install
