@@ -11,7 +11,7 @@ filters: &filters
 executors:
   windows:
     machine:
-      resource_class: 'windows.medium'
+      resource_class: "windows.medium"
       image: windows-server-2022-gui:current
   macos:
     macos:
@@ -53,6 +53,8 @@ jobs:
         type: executor
       shell-installer-url:
         type: string
+      node-version:
+        type: string
     executor: << parameters.os >>
     shell: bash
     environment:
@@ -60,8 +62,8 @@ jobs:
       AUTIFY_CONNECT_CLIENT_MODE: fake
     steps:
       - node/install:
-          node-version: 16.17.0
-      - run: nvm use 16.17.0
+          node-version: << parameters.node-version >>
+      - run: nvm use << parameters.node-version >>
       - autify-cli/install:
           shell-installer-url: << parameters.shell-installer-url >>
       - run: echo token | autify web auth login
@@ -73,7 +75,7 @@ workflows:
   test-deploy:
     when:
       not:
-        equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+        equal: [scheduled_pipeline, << pipeline.trigger_source >>]
     jobs:
       # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
       - default-tests:
@@ -92,6 +94,7 @@ workflows:
             parameters:
               os: [autify-cli/default, macos, windows]
           shell-installer-url: https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/stable/install-cicd.bash
+          node-version: 16.17.0
       - orb-tools/pack:
           filters: *filters
       - orb-tools/publish:
@@ -111,7 +114,7 @@ workflows:
               only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
   nightly-test:
     when:
-      equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+      equal: [scheduled_pipeline, << pipeline.trigger_source >>]
     jobs:
       - integration-tests:
           name: stable-<< matrix.os >>
@@ -119,9 +122,10 @@ workflows:
             parameters:
               os: [autify-cli/default, macos, windows]
           shell-installer-url: https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/stable/install-cicd.bash
+          node-version: 16.17.0
   nightly-beta-test:
     when:
-      equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+      equal: [scheduled_pipeline, << pipeline.trigger_source >>]
     jobs:
       - integration-tests:
           name: beta-<< matrix.os >>
@@ -129,3 +133,4 @@ workflows:
             parameters:
               os: [autify-cli/default, macos, windows]
           shell-installer-url: https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/beta/install-cicd.bash
+          node-version: 18.14.2
