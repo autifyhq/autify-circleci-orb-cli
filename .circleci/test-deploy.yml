@@ -11,7 +11,7 @@ filters: &filters
 executors:
   linux:
     machine:
-      resource_class: "medium"
+      resource_class: "large"
       image: ubuntu-2004:202010-01
   windows:
     machine:
