@@ -134,3 +134,4 @@ workflows:
               os: [autify-cli/default, macos, windows]
           shell-installer-url: https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/beta/install-cicd.bash
           node-version: 18.14.2
+          resource_class: medium+
