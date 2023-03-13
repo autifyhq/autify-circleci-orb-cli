@@ -9,6 +9,10 @@ filters: &filters
     only: /.*/
 
 executors:
+  linux:
+    machine:
+      resource_class: "medium"
+      image: ubuntu-2004:202010-01
   windows:
     machine:
       resource_class: "windows.medium"
@@ -131,6 +135,6 @@ workflows:
           name: beta-<< matrix.os >>
           matrix:
             parameters:
-              os: [autify-cli/default, macos, windows]
+              os: [linux, macos, windows]
           shell-installer-url: https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/beta/install-cicd.bash
           node-version: 18.14.2
