@@ -86,17 +86,17 @@ workflows:
           filters: *filters
           matrix:
             parameters:
-              os: [autify-cli/default, macos, windows]
+              os: [linux, macos, windows]
       - specific-tests:
           filters: *filters
           matrix:
             parameters:
-              os: [autify-cli/default, macos, windows]
+              os: [linux, macos, windows]
       - integration-tests:
           filters: *filters
           matrix:
             parameters:
-              os: [autify-cli/default, macos, windows]
+              os: [linux, macos, windows]
           shell-installer-url: https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/stable/install-cicd.bash
           node-version: 16.17.0
       - orb-tools/pack:
@@ -124,7 +124,7 @@ workflows:
           name: stable-<< matrix.os >>
           matrix:
             parameters:
-              os: [autify-cli/default, macos, windows]
+              os: [linux, macos, windows]
           shell-installer-url: https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/stable/install-cicd.bash
           node-version: 16.17.0
   nightly-beta-test:
