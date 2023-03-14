@@ -98,7 +98,7 @@ workflows:
             parameters:
               os: [linux, macos, windows]
           shell-installer-url: https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/stable/install-cicd.bash
-          node-version: 16.17.0
+          node-version: 18.14.2
       - orb-tools/pack:
           filters: *filters
       - orb-tools/publish:
@@ -126,7 +126,7 @@ workflows:
             parameters:
               os: [linux, macos, windows]
           shell-installer-url: https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/stable/install-cicd.bash
-          node-version: 16.17.0
+          node-version: 18.14.2
   nightly-beta-test:
     when:
       equal: [scheduled_pipeline, << pipeline.trigger_source >>]
