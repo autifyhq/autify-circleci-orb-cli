@@ -12,7 +12,7 @@ executors:
   linux:
     machine:
       resource_class: "medium"
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2204:2024.11.1
   windows:
     machine:
       resource_class: "windows.medium"
